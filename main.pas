@@ -6,4 +6,5 @@
 program main;
 uses cmdline,bintree;
 begin
+    writeln('dfgdfg');
 end.
