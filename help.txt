@@ -1,0 +1,20 @@
+1. help
+// Show this massage.
+
+2. insert [int]
+// Adding an integer to a binary tree.
+// insert 23 , insert -10
+
+3. find [int]
+// Find the number in a binary tree.
+// find 11 , find 67
+
+4. print
+// Print the tree elements on the screen.
+
+5. delete [int]
+// Removes an element from the tree.
+// del 55 , del -234
+
+------------------------------------------
+

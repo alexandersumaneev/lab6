@@ -9,60 +9,170 @@ interface
 
 type cmd_line = object
 private
-        str: string; //строка на экране
+        cmdstr: string; //строка на экране
         cmd:string; //команда после разбиения строки
-        number:Integer; //аргумент команды
-        i_cmd:Integer; // номер команды в i_cmd_list
-        i_fill:Integer; // количество заполненных элементов в i_cmd_list
-        i_arrow:Integer; // номер команды в i_cmd_list при нажатии стрелки вверх
+        cmd_number:Integer; //аргумент команды
+        symbols: set Of char; //доступные символы для печати
         cmd_list: array[0..4] of string; //список доступных команд
-        i_cmd_list: array[0..4] of string;//список 5 последних введенных команд
+        prev_cmd:string; //предыдущая команда
         procedure arrow_up; //действия при нажатии стрелки вверх
         procedure enter; // при нажатии enter
         procedure tab; //автодополнение команды при нажатии tab
         procedure key_press; //обработка нажатия клавиш
         procedure del_spaces; //удаление лишних пробелов
         procedure help; //вывод справки
-        function validation:Boolean; //проверка команды на корректность
+        Procedure backspace(); //стираем символ
+        procedure split; //разделение команды на слово и число
 
 public
         constructor create;
         procedure init; //запуск меню
-end;
+
+    end;
 
 implementation
 
-uses bintree,crt,regexpr;
+uses bintree,regexpr,crt;
 
 procedure cmd_line.help();
-begin
-
+var
+    f:Text;
+    s:string;
+begin //выводит файл со справкой на экран
+    Assign(f,'help.txt');
+    Reset(f);
+    while not Eof(f) do
+    begin
+          ReadLn(f,s);
+          WriteLn(s);
+    end;
+    Close(f);
 end;
 
 
-function cmd_line.validation():Boolean;
+procedure cmd_line.split();
+var
+    space_pos:Integer;
 begin
-    validation:=true;
+    space_pos:=pos(' ',cmdstr);
+    if space_pos <> 0 then //если нашли пробел разбиваем команду на 2 части
+    begin
+        cmd:=Copy(cmdstr,1,space_pos-1); //сама команда
+        Val(Copy(cmdstr,space_pos+1,Length(cmdstr)),cmd_number); //cmd_number содержит число
+        if cmd='insert' then ;
+        if cmd='find' then;
+        if cmd='delete' then ;
+    end
+    else
+    begin
+        cmd:=cmdstr;
+        if cmd='help' then ;
+        if cmd='print' then;
+    end;
 end;
 
 procedure cmd_line.del_spaces();
+Var
+    RegexObj: TRegExpr;
 begin
+    RegexObj := TRegExpr.Create;
+    RegexObj.Expression:='(^\s*)|(\s*$)/(\s\s)'; //пробелы в начале и в конце
+    cmdstr:=RegexObj.Replace(cmdstr,'',false);
+    RegexObj.Expression:='\s+'; //лишние пробелы между словами
+    cmdstr:=RegexObj.Replace(cmdstr,' ',false);
+    RegexObj.Expression:='\s$'; //пробел в конце
+    cmdstr:=RegexObj.Replace(cmdstr,'',false);
+    RegexObj.Destroy();
 end;
 
 procedure cmd_line.tab();
+var
+    i:Integer;
 begin
+    del_spaces();
+    for i:=0 to 4 do
+    begin
+        if pos(cmdstr,cmd_list[i]) = 1 then //если нашли команду в списке команд
+        begin
+            cmdstr:=cmd_list[i]+' ';
+            delline;
+            gotoxy(1,wherey);
+            Write(cmdstr);
+            break;
+
+        end;
+    end;
 end;
 
 procedure cmd_line.enter();
+var
+    expr:string;
+    RegexObj: TRegExpr;
 begin
+    prev_cmd:=cmdstr;
+    del_spaces();
+    expr:='^(((help)|(print))$)|((insert|delete|find)\s(0|(-(1|2|3|4|5|6|7|8|9)\d*)|(1|2|3|4|5|6|7|8|9)\d*))$';
+    RegexObj := TRegExpr.Create;
+    RegexObj.Expression := expr;
+    If not RegexObj.Exec(cmdstr) Then
+    begin //если команда не соответствует регулярному выражению expr
+        writeln(#10#13,'Incorrect command    *',cmdstr,'*');
+        cmdstr:='';
+    end
+    Else
+    begin
+        split();
+        cmdstr:='';
+        WriteLn();
+    end;
+    RegexObj.Destroy();
 end;
 
-procedure cmd_line.arrow_up();
+procedure cmd_line.arrow_up(); //выводит предыдущую команду
 begin
+    cmdstr:=prev_cmd;
+    gotoxy(1,wherey);
+    clreol;
+    write(cmdstr);
 end;
+
+Procedure cmd_line.backspace();
+Begin
+    delete(cmdstr,length(cmdstr),1);
+    gotoxy(wherex-1,wherey);
+    clreol;
+End;
 
 procedure cmd_line.key_press();
+var
+    key:char;
 begin
+    if Length(cmdstr) > 80 then //если слишком много вбили в консоли
+    begin
+        WriteLn(#10#13,'The length of string is 80 characters');
+        cmdstr:='';
+    end
+else
+    begin
+        key := readkey();
+        If (key In symbols) Then
+        Begin
+            write(key);
+            cmdstr := cmdstr+key;
+        End;
+        If (key=#27) Then //Esc
+        Halt();
+        If (key=#13) Then
+            enter();
+        If (key=#9) Then
+            tab();
+        If (key=#8) Then
+            backspace();
+        If (key=#0) Then
+            Case readkey() Of
+            #72: arrow_up();
+            End;
+        end;
 end;
 
 constructor cmd_line.create ;
@@ -72,14 +182,17 @@ begin
     cmd_list[2]:='print';
     cmd_list[3]:='find';
     cmd_list[4]:='delete';
-    i_arrow:=0;
-    i_cmd:=0;
-    i_fill:=0;
+    symbols:=['a'..'z','0' .. '9',' ','-'];
 
 end;
 
 procedure cmd_line.init();
 begin
+    help();
+    while(true) do
+    begin
+        key_press();
+    end;
 
 end;
 

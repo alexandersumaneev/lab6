@@ -38,7 +38,7 @@
       <property name="caretWidth" class="java.lang.Integer" />
     </properties>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="Free Pascal v. 3.0.2 | i386 win32" project-jdk-type="FPCSdkType">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="Free Pascal v. 3.0.2 | x86_64 win64" project-jdk-type="FPCSdkType">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
