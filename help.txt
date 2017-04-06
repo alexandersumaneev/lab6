@@ -1,5 +1,5 @@
 1. help
-// Show this massage.
+// Show this message.
 
 2. insert [int]
 // Adding an integer to a binary tree.
