@@ -4,7 +4,7 @@
  * Date: 05.04.2017
  *)
 program main;
-uses cmdline,bintree;
+uses cmdline;
 begin
     writeln('dfgdfg');
 end.
