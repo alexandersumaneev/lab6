@@ -11,7 +11,7 @@ type cmd_line = object
 private
         cmdstr: string; //строка на экране
         cmd:string; //команда после разбиения строки
-        cmd_number:Integer; //аргумент команды
+        cmd_number:string; //аргумент команды
         symbols: set Of char; //доступные символы для печати
         cmd_list: array[0..4] of string; //список доступных команд
         prev_cmd:string; //предыдущая команда
@@ -23,16 +23,21 @@ private
         procedure help; //вывод справки
         Procedure backspace(); //стираем символ
         procedure split; //разделение команды на слово и число
+//----------------------------------------------------------------------------------
 
 public
         constructor create;
         procedure init; //запуск меню
+//----------------------------------------------------------------------------------
 
     end;
 
 implementation
 
-uses bintree,regexpr,crt;
+uses regexpr,crt,bintree;
+
+var
+    my_tree:bin_tree; //дерево
 
 procedure cmd_line.help();
 var
@@ -54,20 +59,26 @@ procedure cmd_line.split();
 var
     space_pos:Integer;
 begin
+    WriteLn();
     space_pos:=pos(' ',cmdstr);
     if space_pos <> 0 then //если нашли пробел разбиваем команду на 2 части
     begin
         cmd:=Copy(cmdstr,1,space_pos-1); //сама команда
-        Val(Copy(cmdstr,space_pos+1,Length(cmdstr)),cmd_number); //cmd_number содержит число
-        if cmd='insert' then ;
-        if cmd='find' then;
-        if cmd='delete' then ;
+        cmd_number:=Copy(cmdstr,space_pos+1,Length(cmdstr)); //cmd_number содержит число
+        if cmd='insert' then
+            my_tree.insert_tree(cmd_number);
+        if cmd='find' then
+            my_tree.find_tree(cmd_number,my_tree.root_tree());
     end
     else
     begin
         cmd:=cmdstr;
-        if cmd='help' then ;
-        if cmd='print' then;
+        if cmd='help' then
+            help();
+        if cmd='print' then
+            my_tree.print_tree(my_tree.root_tree());
+        if cmd='delete' then
+            my_tree.delete_tree(my_tree.root_tree());
     end;
 end;
 
@@ -111,7 +122,7 @@ var
 begin
     prev_cmd:=cmdstr;
     del_spaces();
-    expr:='^(((help)|(print))$)|((insert|delete|find)\s(0|(-(1|2|3|4|5|6|7|8|9)\d*)|(1|2|3|4|5|6|7|8|9)\d*))$';
+    expr:='^(((help)|(print)|(delete))$)|((insert|find)\s(0|(-(1|2|3|4|5|6|7|8|9)\d*)|(1|2|3|4|5|6|7|8|9)\d*))$';
     RegexObj := TRegExpr.Create;
     RegexObj.Expression := expr;
     If not RegexObj.Exec(cmdstr) Then
@@ -147,7 +158,7 @@ procedure cmd_line.key_press();
 var
     key:char;
 begin
-    if Length(cmdstr) > 80 then //если слишком много вбили в консоли
+    if Length(cmdstr) > 80 then //если слишком много вбили в консоль
     begin
         WriteLn(#10#13,'The length of string is 80 characters');
         cmdstr:='';
@@ -189,6 +200,7 @@ end;
 procedure cmd_line.init();
 begin
     help();
+    my_tree.create();
     while(true) do
     begin
         key_press();

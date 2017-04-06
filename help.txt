@@ -12,9 +12,9 @@
 4. print
 // Print the tree elements on the screen.
 
-5. delete [int]
-// Removes an element from the tree.
-// del 55 , del -234
+5. delete
+// Remove a tree.
 
+Press Esc to exit;
 ------------------------------------------
 

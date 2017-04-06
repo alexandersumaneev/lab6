@@ -4,13 +4,10 @@
  * Date: 05.04.2017
  *)
 program main;
-uses cmdline,regexpr;
+uses cmdline;
 var
     my_cmd: cmd_line;
-    RegexObj: TRegExpr;
-    s:string;
 begin
     my_cmd.create();
     my_cmd.init();
-    ReadLn;
 end.
