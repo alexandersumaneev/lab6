@@ -18,10 +18,10 @@ type
     private
         root:PNode;
     public
-        procedure insert_tree(numb:string);
-        procedure print_tree(elem:PNode);
-        procedure delete_tree(elem:PNode);
-        procedure find_tree(numb:string;elem:PNode);
+        procedure insert_tree(numb:string); //вставка элемента в дерево
+        procedure print_tree(elem:PNode); //вывести дерево на экран
+        procedure delete_tree(elem:PNode); //удалить дерево
+        procedure find_tree(numb:string;elem:PNode); //найти элемент в дереве
         constructor create();
         function root_tree():PNode;
     end;
@@ -36,17 +36,17 @@ end;
 
 procedure bin_tree.insert_tree(numb:string);
 var
-    prev_node:PNode;
-    new_node:PNode;
-    curr_node:PNode;
+    prev_node:PNode; //предыдущий узел дерева
+    new_node:PNode;  //новый узел
+    curr_node:PNode; //текущий узел
 begin
     New(new_node);
     new_node^.data:=numb;
-    new_node^.left:=nil;
+    new_node^.left:=nil; //новый узел будет листом дерева
     new_node^.right:=nil;
     prev_node:=nil;
     curr_node:=root;
-    while curr_node<>nil do
+    while curr_node<>nil do //пока не дойдем до листа
     begin
         prev_node:=curr_node;
         if curr_node^.data > numb then
@@ -54,7 +54,7 @@ begin
         else
             curr_node:=curr_node^.right;
     end;
-    if root=nil then
+    if root=nil then //если дерево пустое, то создаем корень
         root:=new_node
     else
         if prev_node^.data > numb then
