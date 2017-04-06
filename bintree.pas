@@ -33,7 +33,6 @@ begin
 root_tree:=root;
 end;
 
-
 procedure bin_tree.insert_tree(numb:string);
 var
     prev_node:PNode; //предыдущий узел дерева
@@ -61,7 +60,6 @@ begin
             prev_node^.left:=new_node
         else
             prev_node^.right:=new_node;
-
 end;
 
 procedure bin_tree.print_tree(elem:PNode);
@@ -113,6 +111,5 @@ constructor bin_tree.create();
 begin
     root:=nil;
 end;
-
 
 end.

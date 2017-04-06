@@ -110,7 +110,6 @@ begin
             gotoxy(1,wherey);
             Write(cmdstr);
             break;
-
         end;
     end;
 end;
@@ -194,7 +193,6 @@ begin
     cmd_list[3]:='find';
     cmd_list[4]:='delete';
     symbols:=['a'..'z','0' .. '9',' ','-'];
-
 end;
 
 procedure cmd_line.init();
@@ -205,7 +203,6 @@ begin
     begin
         key_press();
     end;
-
 end;
 
 end.
